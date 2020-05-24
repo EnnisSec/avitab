@@ -163,10 +163,17 @@ void PDFViewer::onRotate() {
 }
 
 void PDFViewer::onMouseWheel(int dir, int x, int y) {
-    if (dir > 0) {
-        onPlus();
-    } else if (dir < 0) {
-        onMinus();
+    if(map) {
+        const double displacementFactor = 3500; // Controls how quickly the map moves towards the pointer when zooming. Larger values result in smaller increments.
+        double offsetX = (x - (double)width / 2.0) * (width / displacementFactor) / (double)width;
+        double offsetY = (y - (double)height / 2.0) * (height / displacementFactor) / (double)height;
+        if (dir > 0) {
+            stitcher->setCenter(stitcher->getCenter().x+offsetX, stitcher->getCenter().y+offsetY);
+            map->zoomIn();
+        } else if (dir < 0) {
+            map->zoomOut();
+            stitcher->setCenter(stitcher->getCenter().x-offsetX, stitcher->getCenter().y-offsetY);
+        }
     }
 }
 
